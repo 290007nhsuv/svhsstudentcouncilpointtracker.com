@@ -3,37 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Points Tracker</title>
+    <title>Point Tracker</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <header>
+        <h1>🏆 Student Point Tracker</h1>
+    </header>
 
-    <div class="container">
-        <h1>Member Points & Percentage</h1>
+    <main>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Enter Name or ID (e.g., 260154 or Volpe)" autofocus>
+            <button onclick="searchPoints()">Search</button>
+        </div>
 
-        <div class="selection-area">
-            <label for="semesterSelector">Select Semester:</label>
-            <select id="semesterSelector">
-                <option value="244391946" data-name="Semester 1">Semester 1</option>
-                
-                <option value="YOUR_SEM2_GID" data-name="Semester 2">Semester 2</option> 
-            </select>
+        <div id="results" class="results-container">
+            <p>Enter a **Student Name** or **ID Number** above to see their point status.</p>
         </div>
-        
-        <div class="search-area">
-            <input type="text" id="searchInput" placeholder="Enter Name or Number" aria-label="Search by Name or Number">
-            <button id="searchButton">Search</button>
-        </div>
-        
-        <div id="loadingMessage" class="message">Loading data... Please wait.</div>
-        <div id="errorMessage" class="message error-message" style="display: none;"></div>
-        
-        <div id="resultsArea" class="results-area">
-            <p class="initial-prompt">Enter a name or number and click Search.</p>
-        </div>
-        
-        <p class="data-status">Data source: Static Google Sheet CSV</p>
-    </div>
+
+        <p class="data-note">Data last updated: <span id="lastUpdated">Loading...</span></p>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Point Tracker</p>
+    </footer>
 
     <script src="script.js"></script>
 </body>
