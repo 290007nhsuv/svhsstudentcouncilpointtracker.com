@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Points Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Member Points & Percentage</h1>
+
+        <div class="search-area">
+            <input type="text" id="searchInput" placeholder="Enter Name or Number" aria-label="Search by Name or Number">
+            <button id="searchButton">Search</button>
+        </div>
+        
+        <div id="loadingMessage" class="message">Loading data... Please wait.</div>
+        <div id="errorMessage" class="message error-message" style="display: none;"></div>
+        
+        <div id="resultsArea" class="results-area">
+            <p class="initial-prompt">Enter a name or number and click Search.</p>
+        </div>
+        
+        <p class="data-status">Data source: Static Google Sheet CSV</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
