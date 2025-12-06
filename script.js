@@ -66,20 +66,21 @@ async function fetchSheetData() {
 function searchData() {
     const inputElement = document.getElementById('searchInput');
     const resultsArea = document.getElementById('resultsArea');
-    const searchTerm = inputElement.value.trim().toLowerCase();
+    
+    const searchTerm = inputElement.value.trim().toLowerCase(); 
     
     if (searchTerm === "") {
         resultsArea.innerHTML = '<p class="initial-prompt">Please enter a Name or Number to search.</p>';
         return;
     }
 
-    const foundEntry = dataSet.find(item => 
-        // Search against both Name and ID fields
-        item.Name.toLowerCase() === searchTerm || 
-        item.ID.toLowerCase() === searchTerm
-    );
-
     resultsArea.innerHTML = ''; // Clear previous results
+    
+    const foundEntry = dataSet.find(item => 
+        // Ensure that the item data is also trimmed/lowercased just before comparison
+        item.Name.trim().toLowerCase() === searchTerm || 
+        item.ID.trim().toLowerCase() === searchTerm
+    );
 
     if (foundEntry) {
         // Display the results neatly
