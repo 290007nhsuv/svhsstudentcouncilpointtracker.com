@@ -4,12 +4,10 @@ const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTrxs74JzVjgKbg
 let studentData = [];
 
 // Column indices based on the provided image/CSV structure (0-indexed)
-// 0: id, 1: Name, 2: Points Percentage, 3: Person's Total Points, 4: Total Points, etc.
 const COLUMN_ID = 0;
 const COLUMN_NAME = 1;
 const COLUMN_PERCENTAGE = 2;
 const COLUMN_PERSON_POINTS = 3;
-// We don't need the other column indices for this simplified output
 
 /**
  * Fetches the CSV data and parses it into an array of student objects.
@@ -22,7 +20,6 @@ async function loadData() {
         }
         const csvText = await response.text();
         
-        // Simple CSV parsing (splits by newline, then by comma)
         const rows = csvText.trim().split('\n');
         
         // Skip header row (row 0) and the second row of the image (row 1)
@@ -31,7 +28,6 @@ async function loadData() {
         studentData = dataRows.map(row => {
             const columns = row.split(',');
             
-            // Basic check to ensure the row has enough columns
             if (columns.length > COLUMN_PERSON_POINTS) {
                 return {
                     id: columns[COLUMN_ID].trim(),
@@ -41,7 +37,7 @@ async function loadData() {
                 };
             }
             return null;
-        }).filter(item => item !== null && item.id && item.name); // Filter out invalid/empty rows
+        }).filter(item => item !== null && item.id && item.name);
 
         document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
         console.log(`Data loaded successfully. ${studentData.length} records found.`);
@@ -65,7 +61,6 @@ function searchPoints() {
         return;
     }
 
-    // Try to find a match by ID or by name (case-insensitive, partial match)
     const foundStudent = studentData.find(student => 
         student.id === searchTerm || 
         student.name.toLowerCase().includes(searchTerm)
@@ -80,25 +75,39 @@ function searchPoints() {
 
 /**
  * Creates and inserts the HTML for the student's point details.
- * *** MODIFIED FOR SIMPLIFIED OUTPUT ***
  */
 function displayResult(student, resultsDiv) {
-    // Determine the color class for the percentage
+    
+    // --- NEW VALIDATION LOGIC ---
+    // Check if the percentage field looks like a percentage (ends with %)
+    const percentage = student.percentage.endsWith('%') ? student.percentage : 'N/A';
+    
+    // Check if the points earned field looks like a number
+    const personPoints = !isNaN(parseInt(student.personPoints)) ? student.personPoints : 'N/A';
+    
+    // Determine the color class for the percentage (only if it's a valid percentage)
     let percentageClass = '';
-    const percentageValue = parseFloat(student.percentage); 
+    let percentageText = percentage;
 
-    if (percentageValue >= 100) {
-        percentageClass = 'high';
-    } else if (percentageValue < 75) {
-        percentageClass = 'low';
+    if (percentage !== 'N/A') {
+        const percentageValue = parseFloat(percentage); 
+        if (percentageValue >= 100) {
+            percentageClass = 'high';
+        } else if (percentageValue < 75) {
+            percentageClass = 'low';
+        }
+    } else {
+         // If it's N/A, we can't determine the color
+         percentageText = `**DATA ERROR:** ${student.percentage} (Check spreadsheet)`;
+         percentageClass = 'low'; // Use 'low' color to highlight the error
     }
 
-    // Build the SIMPLIFIED results HTML
+    // Build the results HTML
     resultsDiv.innerHTML = `
         <div class="student-card">
             <h2>${student.name} (${student.id})</h2>
-            <p><strong>Overall Point Percentage:</strong> <span class="points-percentage ${percentageClass}">${student.percentage}</span></p>
-            <p><strong>Points Earned:</strong> ${student.personPoints}</p>
+            <p><strong>Overall Point Percentage:</strong> <span class="points-percentage ${percentageClass}">${percentageText}</span></p>
+            <p><strong>Points Earned:</strong> ${personPoints}</p>
         </div>
     `;
 }
