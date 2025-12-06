@@ -1,8 +1,8 @@
 // The modified URL to fetch the raw CSV data from your published Google Sheet.
 // This is the correct format for static sites to access public sheet data directly.
-const SHEET_PUBLIC_KEY = '2PACX-1vTrxs74JzVjgKbg_JTPLV5YHCG_w4HiRZPx0MclFHofOhwW7O81ygswCE_Aqn8qm_bVuSEgL8DqvabI';
-const SHEET_GID = '244391946'; // The #gid= part of your link
-const SHEET_URL = `https://docs.google.com/spreadsheets/d/e/${SHEET_PUBLIC_KEY}/pub?gid=${SHEET_GID}&single=true&output=csv`;
+//const SHEET_PUBLIC_KEY = '2PACX-1vTrxs74JzVjgKbg_JTPLV5YHCG_w4HiRZPx0MclFHofOhwW7O81ygswCE_Aqn8qm_bVuSEgL8DqvabI';
+//const SHEET_GID = '244391946'; // The #gid= part of your link
+const SHEET_URL = 'https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vTrxs74JzVjgKbg_JTPLV5YHCG_w4HiRZPx0MclFHofOhwW7O81ygswCE_Aqn8qm_bVuSEgL8DqvabI/pubhtml#gid=0';
 
 let dataSet = []; // Array to hold the parsed sheet data
 
@@ -22,10 +22,10 @@ function parseCSV(csvText) {
         if (values.length >= 4) {
             // Clean up the values and map them to friendly keys
             const entry = {
-                Name: values[0].trim().replace(/"/g, ''),
-                ID: values[1].trim().replace(/"/g, ''),
-                Points: values[2].trim().replace(/"/g, ''),
-                Percentage: values[3].trim().replace(/"/g, '')
+                ID: values[0].trim().replace(/"/g, ''),
+                Name: values[1].trim().replace(/"/g, ''),
+                Percentage: values[2].trim().replace(/"/g, ''),
+                Points: values[3].trim().replace(/"/g, '')
             };
             data.push(entry);
         }
