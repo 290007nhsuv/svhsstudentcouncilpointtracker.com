@@ -16,6 +16,7 @@ function parseCSV(csvText) {
     for (let i = 1; i < lines.length; i++) {
         const values = lines[i].split(',');
         
+        // Ensure we have at least 4 columns
         if (values.length >= 4) { 
             // FIXED MAPPING based on your sheet: ID (0), Name (1), Percentage (2), Points (3)
             const entry = {
@@ -61,7 +62,7 @@ async function fetchSheetData(gid) {
     } catch (error) {
         console.error("Could not fetch or parse sheet data:", error);
         loadingMessage.style.display = 'none';
-        errorMessage.textContent = 'ERROR: Could not load data from Google Sheet. Please check your GID and sheet publishing settings.';
+        errorMessage.textContent = 'ERROR: Could not load data. Ensure the sheet is clean (no errors/merged cells) and published correctly.';
         errorMessage.style.display = 'block';
         dataSet = []; // Clear data on error
     } finally {
