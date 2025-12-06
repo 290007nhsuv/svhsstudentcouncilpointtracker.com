@@ -2,7 +2,7 @@
 // This is the correct format for static sites to access public sheet data directly.
 //const SHEET_PUBLIC_KEY = '2PACX-1vTrxs74JzVjgKbg_JTPLV5YHCG_w4HiRZPx0MclFHofOhwW7O81ygswCE_Aqn8qm_bVuSEgL8DqvabI';
 //const SHEET_GID = '244391946'; // The #gid= part of your link
-const SHEET_URL = 'https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vTrxs74JzVjgKbg_JTPLV5YHCG_w4HiRZPx0MclFHofOhwW7O81ygswCE_Aqn8qm_bVuSEgL8DqvabI/pubhtml#gid=0';
+const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTrxs74JzVjgKbg_JTPLV5YHCG_w4HiRZPx0MclFHofOhwW7O81ygswCE_Aqn8qm_bVuSEgL8DqvabI/pub?output=csv';
 
 let dataSet = []; // Array to hold the parsed sheet data
 
