@@ -4,15 +4,12 @@ const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTrxs74JzVjgKbg
 let studentData = [];
 
 // Column indices based on the provided image/CSV structure (0-indexed)
-// 0: id, 1: Name, 2: Points Percentage, 3: Person's Total Points, 4: Total Points, 5: Concessions, 6: Toy Drive, 7: Bonus
+// 0: id, 1: Name, 2: Points Percentage, 3: Person's Total Points, 4: Total Points, etc.
 const COLUMN_ID = 0;
 const COLUMN_NAME = 1;
 const COLUMN_PERCENTAGE = 2;
 const COLUMN_PERSON_POINTS = 3;
-const COLUMN_TOTAL_POINTS = 4;
-const COLUMN_CONCESSIONS = 5;
-const COLUMN_TOY_DRIVE = 6;
-const COLUMN_BONUS = 7;
+// We don't need the other column indices for this simplified output
 
 /**
  * Fetches the CSV data and parses it into an array of student objects.
@@ -28,27 +25,19 @@ async function loadData() {
         // Simple CSV parsing (splits by newline, then by comma)
         const rows = csvText.trim().split('\n');
         
-        // Skip header row (row 0) and the second row of the image (row 1, which appears blank/empty in your file structure)
-        // We will start parsing from row index 2 (line 3 of the actual data)
-        // In the CSV file, it's safer to skip the first two lines if they don't contain data
-        // For a Google Sheet CSV export, the first row is usually the header. Let's skip the header and an assumed empty line.
+        // Skip header row (row 0) and the second row of the image (row 1)
         const dataRows = rows.slice(2); 
 
         studentData = dataRows.map(row => {
-            // Split the row by comma (simple parsing, may need refinement for complex CSV)
             const columns = row.split(',');
             
             // Basic check to ensure the row has enough columns
-            if (columns.length > COLUMN_BONUS) {
+            if (columns.length > COLUMN_PERSON_POINTS) {
                 return {
                     id: columns[COLUMN_ID].trim(),
                     name: columns[COLUMN_NAME].trim(),
                     percentage: columns[COLUMN_PERCENTAGE].trim(),
                     personPoints: columns[COLUMN_PERSON_POINTS].trim(),
-                    totalPoints: columns[COLUMN_TOTAL_POINTS].trim(),
-                    concessions: columns[COLUMN_CONCESSIONS].trim() || '—', // Use '—' if empty
-                    toyDrive: columns[COLUMN_TOY_DRIVE].trim() || '—',
-                    bonus: columns[COLUMN_BONUS].trim() || '—'
                 };
             }
             return null;
@@ -91,11 +80,11 @@ function searchPoints() {
 
 /**
  * Creates and inserts the HTML for the student's point details.
+ * *** MODIFIED FOR SIMPLIFIED OUTPUT ***
  */
 function displayResult(student, resultsDiv) {
     // Determine the color class for the percentage
     let percentageClass = '';
-    // A quick way to get the numerical value from '102.78%'
     const percentageValue = parseFloat(student.percentage); 
 
     if (percentageValue >= 100) {
@@ -104,20 +93,12 @@ function displayResult(student, resultsDiv) {
         percentageClass = 'low';
     }
 
-    // Build the results HTML
+    // Build the SIMPLIFIED results HTML
     resultsDiv.innerHTML = `
         <div class="student-card">
             <h2>${student.name} (${student.id})</h2>
             <p><strong>Overall Point Percentage:</strong> <span class="points-percentage ${percentageClass}">${student.percentage}</span></p>
             <p><strong>Points Earned:</strong> ${student.personPoints}</p>
-            <p><strong>Total Points Available:</strong> ${student.totalPoints}</p>
-            
-            <h3>Bonus/Deduction Details</h3>
-            <ul>
-                <li><strong>Concessions:</strong> ${student.concessions}</li>
-                <li><strong>Toy Drive:</strong> ${student.toyDrive}</li>
-                <li><strong>Other Bonus:</strong> ${student.bonus}</li>
-            </ul>
         </div>
     `;
 }
