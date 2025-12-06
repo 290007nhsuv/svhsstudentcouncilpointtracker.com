@@ -1,13 +1,14 @@
 // The modified URL to fetch the raw CSV data from your published Google Sheet.
-// This is the correct format for static sites to access public sheet data directly.
-//const SHEET_PUBLIC_KEY = '2PACX-1vTrxs74JzVjgKbg_JTPLV5YHCG_w4HiRZPx0MclFHofOhwW7O81ygswCE_Aqn8qm_bVuSEgL8DqvabI';
-//const SHEET_GID = '244391946'; // The #gid= part of your link
-const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTrxs74JzVjgKbg_JTPLV5YHCG_w4HiRZPx0MclFHofOhwW7O81ygswCE_Aqn8qm_bVuSEgL8DqvabI/pub?output=csv';
+// I have uncommented and used the correct GID (Sheet ID) for your specific tab.
+const SHEET_PUBLIC_KEY = '2PACX-1vTrxs74JzVjgKbg_JTPLV5YHCG_w4HiRZPx0MclFHofOhwW7O81ygswCE_Aqn8qm_bVuSEgL8DqvabI';
+const SHEET_GID = '244391946'; // The #gid= part of your link
+// CORRECTED URL: Includes the GID and single=true to ensure only one tab is downloaded
+const SHEET_URL = `https://docs.google.com/spreadsheets/d/e/${SHEET_PUBLIC_KEY}/pub?gid=${SHEET_GID}&single=true&output=csv`;
 
 let dataSet = []; // Array to hold the parsed sheet data
 
-// --- CSV Parsing Function ---
-// Assumes the sheet columns are in this order: Name, Number, Points, Percentage
+// --- CSV Parsing Function (FIXED COLUMN ORDER) ---
+// Now assumes sheet columns are in this order: ID, Name, Points Percentage, Points...
 function parseCSV(csvText) {
     const lines = csvText.split('\n').filter(line => line.trim() !== '');
     if (lines.length < 2) return [];
@@ -16,16 +17,17 @@ function parseCSV(csvText) {
     const data = [];
     
     // NOTE: This basic parsing is simple but fragile if your data contains commas or quotes.
-    // For a simple ID/Points list, it is usually sufficient.
     for (let i = 1; i < lines.length; i++) {
         const values = lines[i].split(',');
-        if (values.length >= 4) {
-            // Clean up the values and map them to friendly keys
+        
+        // We only need the first 4 columns for the search/display
+        if (values.length >= 4) { 
+            // FIXED: Values are mapped based on your sheet order: ID (0), Name (1), Percentage (2), Points (3)
             const entry = {
-                ID: values[0].trim().replace(/"/g, ''),
-                Name: values[1].trim().replace(/"/g, ''),
-                Percentage: values[2].trim().replace(/"/g, ''),
-                Points: values[3].trim().replace(/"/g, '')
+                ID: values[0].trim().replace(/"/g, ''),          // Index 0: ID
+                Name: values[1].trim().replace(/"/g, ''),        // Index 1: Name
+                Percentage: values[2].trim().replace(/"/g, ''),  // Index 2: Points Percentage
+                Points: values[3].trim().replace(/"/g, '')       // Index 3: Points
             };
             data.push(entry);
         }
@@ -33,7 +35,7 @@ function parseCSV(csvText) {
     return data;
 }
 
-// --- Data Fetching Function ---
+// --- Data Fetching Function (UNCHANGED) ---
 async function fetchSheetData() {
     const loadingMessage = document.getElementById('loadingMessage');
     const errorMessage = document.getElementById('errorMessage');
@@ -60,7 +62,7 @@ async function fetchSheetData() {
     }
 }
 
-// --- Search Function ---
+// --- Search Function (UNCHANGED) ---
 function searchData() {
     const inputElement = document.getElementById('searchInput');
     const resultsArea = document.getElementById('resultsArea');
@@ -72,6 +74,7 @@ function searchData() {
     }
 
     const foundEntry = dataSet.find(item => 
+        // Search against both Name and ID fields
         item.Name.toLowerCase() === searchTerm || 
         item.ID.toLowerCase() === searchTerm
     );
@@ -104,7 +107,7 @@ function searchData() {
     }
 }
 
-// --- Initialization ---
+// --- Initialization (UNCHANGED) ---
 document.addEventListener('DOMContentLoaded', () => {
     // Disable button until data is loaded
     document.getElementById('searchButton').disabled = true; 
