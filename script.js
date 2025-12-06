@@ -4,10 +4,13 @@ const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTrxs74JzVjgKbg
 let studentData = [];
 
 // Column indices based on the provided image/CSV structure (0-indexed)
-const COLUMN_ID = 0;
-const COLUMN_NAME = 1;
-const COLUMN_PERCENTAGE = 2;
-const COLUMN_PERSON_POINTS = 3;
+// NOTE: We are intentionally shifting the data retrieval based on user feedback
+// COLUMN_ID (0) and COLUMN_NAME (1) remain the same.
+
+// Mapped to "Total Points Available" column (index 4 in the sheet structure)
+const COLUMN_PERCENTAGE_MAPPED = 4; 
+// Mapped to "Concessions" column (index 5 in the sheet structure)
+const COLUMN_POINTS_EARNED_MAPPED = 5; 
 
 /**
  * Fetches the CSV data and parses it into an array of student objects.
@@ -28,12 +31,15 @@ async function loadData() {
         studentData = dataRows.map(row => {
             const columns = row.split(',');
             
-            if (columns.length > COLUMN_PERSON_POINTS) {
+            // Ensure we have enough columns to safely access the mapped indices
+            if (columns.length > COLUMN_POINTS_EARNED_MAPPED) {
                 return {
-                    id: columns[COLUMN_ID].trim(),
-                    name: columns[COLUMN_NAME].trim(),
-                    percentage: columns[COLUMN_PERCENTAGE].trim(),
-                    personPoints: columns[COLUMN_PERSON_POINTS].trim(),
+                    id: columns[0].trim(),
+                    name: columns[1].trim(),
+                    // Retrieve from the Total Points Available column (index 4)
+                    percentage: columns[COLUMN_PERCENTAGE_MAPPED].trim(), 
+                    // Retrieve from the Concessions column (index 5)
+                    personPoints: columns[COLUMN_POINTS_EARNED_MAPPED].trim(),
                 };
             }
             return null;
@@ -78,35 +84,27 @@ function searchPoints() {
  */
 function displayResult(student, resultsDiv) {
     
-    // --- NEW VALIDATION LOGIC ---
-    // Check if the percentage field looks like a percentage (ends with %)
-    const percentage = student.percentage.endsWith('%') ? student.percentage : 'N/A';
+    // Use the values as stored from the mapped columns
+    const percentage = student.percentage || 'N/A';
+    const personPoints = student.personPoints || 'N/A';
     
-    // Check if the points earned field looks like a number
-    const personPoints = !isNaN(parseInt(student.personPoints)) ? student.personPoints : 'N/A';
-    
-    // Determine the color class for the percentage (only if it's a valid percentage)
+    // Determine the color class for the percentage (only if it's a valid number)
     let percentageClass = '';
-    let percentageText = percentage;
 
-    if (percentage !== 'N/A') {
+    if (!isNaN(parseFloat(percentage))) {
         const percentageValue = parseFloat(percentage); 
         if (percentageValue >= 100) {
             percentageClass = 'high';
         } else if (percentageValue < 75) {
             percentageClass = 'low';
         }
-    } else {
-         // If it's N/A, we can't determine the color
-         percentageText = `**DATA ERROR:** ${student.percentage} (Check spreadsheet)`;
-         percentageClass = 'low'; // Use 'low' color to highlight the error
     }
 
     // Build the results HTML
     resultsDiv.innerHTML = `
         <div class="student-card">
             <h2>${student.name} (${student.id})</h2>
-            <p><strong>Overall Point Percentage:</strong> <span class="points-percentage ${percentageClass}">${percentageText}</span></p>
+            <p><strong>Overall Point Percentage:</strong> <span class="points-percentage ${percentageClass}">${percentage}</span></p>
             <p><strong>Points Earned:</strong> ${personPoints}</p>
         </div>
     `;
